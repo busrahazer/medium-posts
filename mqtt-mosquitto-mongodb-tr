@@ -1,0 +1,65 @@
+MQTT | Mosquitto | MongoDB
+
+Hi! Bugün benim de sıfırdan öğrenmeye başladığım bu terimlerin ne işe yaradığına ve nasıl kullanıldığına bakalım.
+
+MQTT (Message Queuing Telemetry Transport), Internet of Things (IoT) cihazları arasında hafif ve verimli bir mesajlaşma protokolüdür. 
+Bu protokol, cihazlar arasında veri alışverişi yapmak için kullanılır ve tipik olarak bir istemci/sunucu modelinde çalışır. 
+İstemci cihazlar, MQTT sunucusuna (genellikle bir broker olarak adlandırılır) bağlanır ve yayınlama (publish) ve abonelik (subscribe) işlemleri yaparak veri alışverişi yaparlar. 
+MQTT, genellikle IoT uygulamalarında sensör verilerinin toplanması, cihaz yönetimi ve kontrolü gibi senaryolarda kullanılır.
+
+MQ ise Message Queue’nin kısaltmasıdır. Bir mesaj kuyruğu, mesajları geçici olarak depolayan ve daha sonra bu mesajları alacak olan işleyiciye aktaran bir sistemdir. 
+Bu kuyruklar, işlenmesi gereken iş yükünü düzenlemek, farklı sistemler arasında asenkron iletişimi kolaylaştırmak veya sistemler arasında veri alışverişi yapmak için kullanılabilir. 
+Mesaj kuyrukları, sistemler arasında bağımsızlık ve esneklik sağlayarak genellikle dağıtılmış sistemlerde, özellikle mikro servis mimarilerinde ve iş süreç yönetiminde kullanılır.
+
+    Yararlı bir benzetme, TV veya radyodur.
+
+    Bir TV yayıncısı, belirli bir kanalı kullanarak bir TV programını yayınlar ve bir izleyici, yayını izlemek için bu kanalı açar. Yayıncı ile izleyici arasında doğrudan bir bağlantı yoktur. 
+    MQTT’de bir yayıncı bir konu hakkında mesajlar yayınlar ve bir abonenin mesajı görüntülemek için o konuya abone olması gerekir.
+    
+    Kaynak: https://canerezeroglu.blogspot.com/2020/08/iot-mosquitto-nedir.html
+
+Mosquitto, Eclipse Vakfı tarafından geliştirilen ve MQTT protokolünü destekleyen bir mesaj broker yazılımıdır.
+MongoDB, belge tabanlı bir veritabanıdır, yani veriler JSON benzeri belgeler halinde saklanır. Geleneksel ilişkisel veritabanı sistemlerine göre daha esnek bir yapıya sahiptir ve yüksek ölçeklenebilirlik ve performans sunar.
+
+Bu bölümde yalnızca Mosquitto kurulum ve kullanımına bakacağız. İkinci bölümde ise MongoDB ile ilgileneceğiz.
+
+Mosquitto kurulumunu yaparak başlayalım. Terminale gelerek aşağıdaki komutları yazalım. 
+(Komutlar Ubuntu için yazılmıştır ancak Windows ve MAC için de çok farklı olmayacaktır, kolaylıkla bulabilirsiniz ya da bana ulaşabilirsiniz.)
+
+  sudo apt install mosquitto
+  
+  sudo systemctl start mosquitto
+  
+  sudo systemctl enable mosquitto
+  
+  sudo systemctl status mosquitto
+
+Bu kısma kadar Mosquitto MQTT broker’ını kurmuş ve aktifleştirmiş olduk. Veri alışverişi yapmak için MQTT istemcisini kuralım ve mesaj yayınlamaya başlayalım:
+
+  sudo apt install mosquitto-clients 
+  
+  mosquitto_pub -h localhost -t test_topic -m "Hi! from Busra" 
+  
+  mosquitto_sub -h localhost -t test_topic
+
+Yukarıdaki abone olma işlemini terminalde yaptıktan sonra farklı bir terminal açarak pub işlevini kullanabilirsiniz. Böylece abone olduğunuz kanalın mesajlarını dinlemeye başlayabilirsiniz.
+
+  mosquitto_pub: MQTT mesajlarını yayınlamak için kullanılan komuttur.
+  
+  mosquitto_sub: MQTT mesajlarını almak/dinlemek için kullanılan komuttur.
+  
+  -h localhost : Bağlanılacak MQTT broker’ının adresini belirtir. Burada “localhost” kullanılarak yerel makinedeki (bilgisayarınız) broker’a bağlanılır.
+  
+  -t test_topic: Yayınlanacak mesajın gönderileceği MQTT konusunu belirtir. “test_topic” adlı bir konumuz olduğunu varsayalım.
+  
+  -m “Hi! from Busra”: Yayınlanacak mesaj içeriğidir.
+
+Mosquitto’nun farklı özelliklerini öğrenmek ve kullanmak için aşağıdaki komutları kullanabilirsiniz:
+
+  mosquitto --help
+  mosquitto_pub --help
+  mosquitto_sub --help
+
+Ayrıca mesajlaşmaların ve bağlantıların kontrolünü de ‘/var/log/mosquitto/mosquitto.log’ dosyasını izleyerek yapabilirsiniz.
+
+İkinci bölümde de MongoDB kurulum ve kullanımına göz atalım. Şimdilik hoşçakalın!
