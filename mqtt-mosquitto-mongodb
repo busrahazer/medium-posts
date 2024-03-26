@@ -1,0 +1,64 @@
+MQTT | Mosquitto | MongoDB
+
+Let’s take a look at what these terms do and how they are used, which I’m also starting to learn from scratch today.
+
+MQTT (Message Queuing Telemetry Transport) is a lightweight and efficient messaging protocol among Internet of Things (IoT) devices. 
+This protocol is used for exchanging data between devices and typically operates in a client/server model. 
+Client devices connect to an MQTT server (often referred to as a broker) and exchange data by publishing and subscribing.
+MQTT is commonly used in IoT applications such as collecting sensor data, device management, and control scenarios.
+
+MQ is an abbreviation for Message Queue. A message queue is a system that temporarily stores messages and then delivers these messages to the processor that will handle them later. 
+These queues can be used to organize workloads that need to be processed, facilitate asynchronous communication between different systems, or exchange data between systems.
+Message queues provide independence and flexibility between systems, and are commonly used in distributed systems, especially in microservices architectures and business process management.
+
+    A useful analogy is television or radio.
+
+    A TV broadcaster broadcasts a TV program using a specific channel, and a viewer opens that channel to watch the broadcast. 
+    There is no direct connection between the broadcaster and the viewer. Similarly, in MQTT, a publisher broadcasts messages about a topic, and a subscriber must subscribe to that topic to view the message.
+
+    Source: https://canerezeroglu.blogspot.com/2020/08/iot-mosquitto-nedir.html
+
+Mosquitto is a message broker software developed by the Eclipse Foundation that supports the MQTT protocol. 
+MongoDB is a document-oriented database, meaning data is stored in JSON-like documents. It provides a more flexible structure compared to traditional relational database systems and offers high scalability and performance.
+
+In this section, we’ll only focus on the installation and usage of Mosquitto. In the second section, we’ll look into MongoDB.
+
+Let’s start by installing Mosquitto. Go to the terminal and type the following commands. (The commands are written for Ubuntu, but they won’t be much different for Windows and MAC, you can easily find them or contact me.)
+
+  sudo apt install mosquitto
+  
+  sudo systemctl start mosquitto
+  
+  sudo systemctl enable mosquitto
+  
+  sudo systemctl status mosquitto
+
+By this point, we’ve installed and activated the Mosquitto MQTT broker. Let’s install the MQTT client and start publishing messages:
+
+  sudo apt install mosquitto-clients 
+  
+  mosquitto_pub -h localhost -t test_topic -m "Hi! from Busra" 
+  
+  mosquitto_sub -h localhost -t test_topic
+
+After subscribing to the topic in the terminal as shown above, you can open a different terminal and use the publishing function. This way, you can start listening to the messages on the subscribed channel.
+
+  mosquitto_pub: Command used to publish MQTT messages.
+  
+  mosquitto_sub: Command used to receive/listen to MQTT messages.
+  
+  -h localhost: Specifies the address of the MQTT broker to connect to. Here, "localhost" is used to connect to the broker on the local machine (your computer).
+  
+  -t test_topic: Specifies the MQTT topic to which the message will be published. Let's assume we have a topic named "test_topic".
+  
+  -m "Hi! from Busra": Content of the message to be published.
+
+You can learn about different features of Mosquitto and how to use them with the following commands:
+
+  mosquitto --help
+  mosquitto_pub --help
+  mosquitto_sub --help
+
+You can also monitor message exchanges and connections by watching the ‘/var/log/mosquitto/mosquitto.log’ file.
+
+Let’s explore MongoDB installation and usage in the second section. Goodbye for now!
