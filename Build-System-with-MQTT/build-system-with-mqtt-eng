@@ -1,0 +1,161 @@
+Hi! In my previous post, I mentioned that I’m trying to learn the MQTT protocol and will share my progress. It might be helpful to take a quick look at the post where I explained what MQTT is, what it’s used for, and how to use it:
+
+MQTT | Mosquitto | MongoDB
+
+MQTT is an IoT protocol consisting of clients that publish messages and servers that listen to these messages. I used the Mosquitto module to connect to the MQTT server, which is also known as the broker. Additionally, my project is a C++ project based on the signal-slot mechanism. My goal is to manipulate data using MQTT. Before moving on to this, let’s go over the steps I completed to include this in my project.
+
+Firstly, I created a base for this system in my project. I did this by creating the mqsystem class. This class contains:
+
+Header files are files that contain C function declarations and macro definitions shared between several source files, with the extension “.h”.
+
+Below, I defined functions belonging to this file that can be used by each source file:
+
+public:
+        explicit MqSystem();
+
+        void connectBroker(QString host, qint16 port, qint16 timeout);
+        void disconnectBroker();
+        void pub(QString topic, QString val);
+        void sub(QString topic);
+        void unsub(QString topic);
+
+Here, we start by connecting to a Broker, providing parameters such as the host name, the port to connect to (for example, port 1883 is used for the Mosquitto module), and the time interval. We also mentioned that MQTT follows the subscribe/publish logic. We have defined functions to perform these operations.
+
+I mentioned that I’m working on a project based on the signal-slot mechanism. Let’s explain these first.
+
+Signals: They are used to notify other objects when an event occurs.
+
+Slots: They are functions that are automatically called when a signal is triggered.
+
+For example, when connecting the signal in class ax to the slot in class bz:
+
+// ax class
+
+signals:
+        void busraSinyali(int id, QString bValue);
+
+// bz class
+
+public slots:
+        void busraSlotu(int id, QString bValue);
+
+
+// Connection signal-slot
+
+ax *sinyal = new ax();
+bz *slot = new bz();
+
+QObject:: connect(sinyal & ax :: busraSinyali, slot & bz :: busraSlotu);
+        void onMsgReceived(const QByteArray &msg, const QMqttTopicName &topic);
+
+If I managed to explain the signal-slot mechanism a bit, let’s continue. In the following section, I made the signal and slot definitions for the project.
+
+signals:
+       void newVal(QString topic, QString val);
+
+public slots:
+       void busraDenemeChanged();
+
+private slots:
+        void onConnected();
+        void onDisconnected();
+        void onMsgReceived(const QByteArray &msg, const QMqttTopicName &topic);
+
+Additionally, we also need to make the following definitions that only the mqsystem class can use:
+
+private:
+        QMqttClient m_client;
+
+        QString m_host;
+        qint16 m_port;
+        qint16 m_timeout;
+        QList<QString> m_topics;
+
+When we write the content of the header file, we need to fill these in the source file.
+
+The source file is the one containing C++ code. Here, we should write the contents of the functions defined in the header file.
+
+Firstly, I established the connections:
+
+MqSystem::MqSystem(){
+  connect(&m_client, &QMqttClient::connected, this, &MqSystem::onConnected);
+  connect(&m_client, &QMqttClient::disconnected, this, &MqSystem::onDisconnected);
+  connect(&m_client, &QMqttClient::messageReceived, this, &MqSystem::onMsgReceived);
+}
+
+Here, we connect our functions with the functions of QMqttClient (this part comes from the ready-made class created by QT for MQTT). Instead of making this connection, we could directly use the functions of QMqttClient, but to make the function contents more flexible, it's more functional to create new functions that will include only the relevant parts from here and add additional features.
+
+Now, let’s take a look at how we use the connectBroker function in the header file and the variables defined as private in the header file:
+
+void MqSystem::connectBroker(QString host, qint16 port, qint16 timeout){
+
+        m_host = host;
+        m_port = port;
+        m_timeout = timeout;
+
+// We mapped m_client to QMqttClient in the header file,
+// so names like setHostName come from there.
+
+        m_client.setHostname(m_host);
+        m_client.setPort(m_port);
+        m_client.connectToHost();
+}
+
+Additionally, we had defined two more functions named pub and sub. I wrote their contents as follows:
+
+void MqSystem::pub(QString topic, QString val){
+
+        QMqttTopicName mqttTopic(topic);
+        QString value = val.toUtf8();
+        m_client.publish(mqttTopic, value);
+}
+
+void MqSystem::sub(QString topic){
+
+        m_client.subscribe(QMqttTopicFilter(topic));
+        m_topics.append(topic);
+}
+
+The contents of the onConnect, onDisconnect, and onMsgReceived functions in the header file:
+
+void MqSystem::onConnected(){
+
+        qDebug() << "Connected to MQTT broker";
+        for (const QString &topic : qAsConst(m_topics)) {
+            m_client.subscribe(QMqttTopicFilter(topic));
+}
+
+void MqSystem::onDisconnected(){
+
+        qDebug() << "Disconnected from MQTT broker";
+}
+
+void MqSystem::onMsgReceived(const QString &msg, const QMqttTopicName &topic){
+
+        emit newVal(topic.name(), QString::fromUtf8(msg));
+}
+
+You may have noticed the emit operation in the onMsgReceived function. This operation is where we emit the signal, allowing us to use it. If a signal is not emitted, there is no function. This function is our message broadcasting function, and it makes sense to emit the newVal signal here.
+
+Now, let’s make a publish operation from the function we wrote for testing purposes, so we can test the system.
+
+void MqSystem::busraDenemeChanged(){
+
+        pub("busraMesaji" "Hi from BUSRA!");
+        qDebug() << "busraDeneme communicate from MQTT.";
+}
+
+Great job! We have written the functions, made the signal slot connections, emitted the signal and broadcast a message. Now, let’s see if we can receive this message.
+
+Firstly, I included the mqsystem class in the main file of my project along with details such as host and port, and connected to the Broker.
+
+m_mqSystem.connectBroker("localhost", 1883, 60);
+m_mqSystem.busraDenemeChanged();   // for testing
+
+Now, we can listen to the message from the terminal!
+
+mosquitto_sub -t "busraMesaji"
+
+In the terminal where I’m listening to the channel, I can receive the message “Hi from BUSRA!”.
+
+I’ve attempted to set up a basic IoT communication system and explain it. Until next time!

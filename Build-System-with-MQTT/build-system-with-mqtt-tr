@@ -1,0 +1,162 @@
+Hi! MQTT protokolünü öğrenmeye çalıştığımı ve bu adımları paylaşacağımı önceki yazımda anlatmıştım. MQTT nedir, ne işe yarar, nasıl kullanılır bunları açıkladığım yazıya kısa bir göz atmanın faydası olacaktır:
+
+MQTT | Mosquitto | MongoDB
+
+MQTT, mesaj yayınlayan bir client ve bu mesajları dinleyen sunuculardan oluşan bir IoT protokolüdür. MQTT sunucusunu Broker’a bağlarken Mosquitto modülünden yararlandım. Ayrıca projem sinyal-slot mantığına dayanan bir C++ projesi. Amacım ise MQTT ile verilerim üzerinde değişiklikler yapabilmek. Projeme bunu dahil ederken hangi adımları tamamladım bunlara geçebiliriz.
+
+Projemde öncelikle bu sistem için bir base oluşturdum. Bu temeli mqsystem sınıfı oluşturarak bunu yaptım. Bu sınıfın içeriği:
+
+Header dosyası “.h” uzantısı ile biten C fonksiyon tanımlamaları ve makro tanımlamalarını içeren birkaç kaynak dosya arasında paylaşılan dosyalardır.
+
+Aşağıda bu dosyaya ait ve her kaynak dosyası tarafından kullanılabilir fonksiyonları tanımladım:
+
+public:
+        explicit MqSystem();
+
+        void connectBroker(QString host, qint16 port, qint16 timeout);
+        void disconnectBroker();
+        void pub(QString topic, QString val);
+        void sub(QString topic);
+        void unsub(QString topic);
+
+Burada öncelikle bir Broker’a bağlanmak ve bağlanırken de host ismi, hangi port’tan bağlanılacağı (örneğin Mosquitto modülü için 1883 numaralı port kullanılır) ve zaman aralığı gibi parametreler vererek başlıyoruz. Ayrıca MQTT ‘nin subscribe/publish mantığına sahip olduğunu anlatmıştık. Bu işlemleri yapacak fonksiyonları da tanımladık.
+
+Sinyal-Slot mantığına dayalı bir projede çalıştığımı söylemiştim. Önce bunları açıklayalım.
+
+Signals: Bir olayın gerçekleştiğini diğer nesnelere bildirmek için kullanılır.
+
+Slots: Bir sinyal tetiklendiğinde otomatik olarak çağrılacak işlevdir.
+
+Örneğin ax sınıfındaki sinyali, bz sınıfındaki slota bağlarken:
+
+// ax sınıfı
+
+signals:
+        void busraSinyali(int id, QString bValue);
+
+// bz sınıfı
+
+public slots: // her yerden ulaşmak adına public tanımladım
+        void busraSlotu(int id, QString bValue);
+
+
+// Bağlantıyı kuralım
+
+ax *sinyal = new ax();
+bz *slot = new bz();
+
+QObject:: connect(sinyal & ax :: busraSinyali, slot & bz :: busraSlotu);
+        void onMsgReceived(const QByteArray &msg, const QMqttTopicName &topic);
+
+Sinyal-slot mantığını biraz açıklayabildiysem devam edelim. Aşağıdaki kısımda da projenin sinyal ve slot tanımlarını yaptım.
+
+signals:
+       void newVal(QString topic, QString val);
+
+public slots:
+       void busraDenemeChanged();
+
+private slots:
+        void onConnected();
+        void onDisconnected();
+        void onMsgReceived(const QByteArray &msg, const QMqttTopicName &topic);
+
+Ayrıca sadece mqsystem sınıfının kullanabileceği aşağıdaki tanımları da yapmak gerekiyor:
+
+
+private:
+        QMqttClient m_client;
+
+        QString m_host;
+        qint16 m_port;
+        qint16 m_timeout;
+        QList<QString> m_topics;
+
+Header dosyasının içeriğini yazdığımızda bunları kaynak dosyasında doldurmamız gerekiyor.
+
+Kaynak dosyası, C++ kodlarını içeren dosyaya denir. Burada header dosyasında tanımladığımız işlevlerin içeriklerini yazmalıyız.
+
+Öncelikle bağlantıları kurdum:
+
+MqSystem::MqSystem(){
+  connect(&m_client, &QMqttClient::connected, this, &MqSystem::onConnected);
+  connect(&m_client, &QMqttClient::disconnected, this, &MqSystem::onDisconnected);
+  connect(&m_client, &QMqttClient::messageReceived, this, &MqSystem::onMsgReceived);
+}
+
+Buradaki bağlantı QMqttClient (bu kısım QT’nin MQTT ile oluşturduğu hazır sınıftan geliyor) işlevleri ile kendi işlevlerimi bağlıyoruz. Bu bağlantıyı yapmak yerine direkt QMqttClient işlevlerini de kullanabilirdik ancak fonkiyon içeriklerini daha esnekleştirmek adına sadece ilgili kısımları buradan alıp ek özellikleri kendimizin yazacağı yeni fonksiyonlar oluşturmak daha işlevsel.
+
+Şimdi header dosyasında connectBroker fonksiyonunu ve header dosyasında private olarak tanımladığımız değişkenleri nasıl kullandığımıza bakalım:
+
+void MqSystem::connectBroker(QString host, qint16 port, qint16 timeout){
+
+        m_host = host;
+        m_port = port;
+        m_timeout = timeout;
+
+// Header dosyasında m_client sözcüğünü QMqttClient ile map'lemiştik,
+// yani setHostName gibi isimler oradan geliyor .
+
+        m_client.setHostname(m_host);
+        m_client.setPort(m_port);
+        m_client.connectToHost();
+}
+
+Ayrıca pub ve sub isminde iki işlev daha tanımlamıştık bunların içeriğini de temel şekilde şöyle yazdım:
+
+void MqSystem::pub(QString topic, QString val){
+
+        QMqttTopicName mqttTopic(topic);
+        QString value = val.toUtf8();
+        m_client.publish(mqttTopic, value);
+}
+
+void MqSystem::sub(QString topic){
+
+        m_client.subscribe(QMqttTopicFilter(topic));
+        m_topics.append(topic);
+}
+
+Header dosyasındaki onConnect, onDisconnect ve onMsgReceived fonksiyonlarının içeriği:
+
+void MqSystem::onConnected(){
+
+        qDebug() << "Connected to MQTT broker";
+        for (const QString &topic : qAsConst(m_topics)) {
+            m_client.subscribe(QMqttTopicFilter(topic));
+}
+
+void MqSystem::onDisconnected(){
+
+        qDebug() << "Disconnected from MQTT broker";
+}
+
+void MqSystem::onMsgReceived(const QString &msg, const QMqttTopicName &topic){
+
+        emit newVal(topic.name(), QString::fromUtf8(msg));
+}
+
+onMsgReceived fonksiyonundaki emit işlemi dikkatinizi çekmiştir. Bu işlem sinyali yaydığımız ve bu şekilde onu kullanabildiğimiz kısımdır. Bir sinyal emit edilmezse/yayılmazsa bir işlevi yoktur. Bu fonksiyon da mesajları yayan fonksiyonumuz, burada newVal sinyalini emit etmek mantıklı.
+
+Artık deneme için yazdığımız fonksiyondan da bir publish işlemi yaparak mesaj yayalım, böylece sistemi test edebiliriz.
+
+void MqSystem::busraDenemeChanged(){
+
+        pub("busraMesaji" "Hi from BUSRA!");
+        qDebug() << "busraDeneme communicate from MQTT.";
+}
+
+İşlevleri yazdık, sinyal ve slot bağlantılarını yaptık, sinyali yaydık ve bir adet mesaj yayınladık. Peki bu mesajı görebilecek miyiz bunu kontrol edelim.
+
+Ben öncelikle projemin ana dosyasında host, port gibi detaylarla birlikte mqsystem sınıfını dahil etme işlemi yaptım ve Broker’a bağlandım.
+
+m_mqSystem.connectBroker("localhost", 1883, 60);
+m_mqSystem.busraDenemeChanged();   // for testing
+
+Artık terminalden mesajı dinleyebiliriz!
+
+mosquitto_sub -t "busraMesaji"
+
+Kanalı dinlediğim terminalde Hi from BUSRA! mesajını alabilirim.
+
+Giriş seviyesinde bir IoT haberleşme sistemi kurmaya ve bunu anlatmaya çalıştım. Devamında görüşmek üzere.
