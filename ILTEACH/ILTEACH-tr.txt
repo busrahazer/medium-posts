@@ -1,0 +1,76 @@
+Sohbet Ederek Öğrenmenin Gücü: ILTeach ile Etkileşimli Ders Deneyimi
+
+🟣 “Bir sınavdan önce arkadaşımın bana konuyu anlatması, günlerce çalışmaktan daha faydalı oluyordu.”
+
+Bu cümleyi birçok öğrenci kurmuştur. Çünkü öğrenmenin en etkili yollarından biri, karşılıklı etkileşim yoluyla gerçekleşir. İşte bu fikirden yola çıkarak, ILTeach — Interactive Lesson Teaching projesini geliştirmeye başladım.
+
+👾 Fikir Nasıl Ortaya Çıktı?
+Projeye başlarken temel sorum şuydu:
+
+Yapay zeka, bir konuyu bize tıpkı bir arkadaşımız gibi anlatabilir mi?
+
+Bu sorunun arkasında üç temel gözlem vardı:
+
+Bilginin sentezlenerek sunulması, zihinsel yükü azaltır.
+Benzer düzeydeki biriyle öğrenme, duygusal yakınlık sayesinde daha etkilidir.
+Karşılıklı etkileşim, bilgiyi hem öğrenmeyi hem de sorgulamayı kolaylaştırır.
+Bunun sonucunda hedefim, sadece bilgi sunan bir sistem değil, gerçekten etkileşimli bir AI öğrenme arkadaşı tasarlamaktı.
+
+Ürünün Temel Amacı
+ILTeach, öğrencilerin kendi kaynaklarını (PDF notları, ders içerikleri vb.) yükleyerek, bu belgeler üzerinden sohbet edebilecekleri bir platformdur.
+
+Amaç:
+
+Öğrencinin elindeki içerikleri sentezlemek
+Doğrudan konuyla ilgili sorular sorabilmesini sağlamak
+Kaynaksız durumlarda da genel bilgiyle destek sunmak
+🔗 Kullanılan Teknolojiler
+Bu projede, güçlü bir AI motorunun yanında, hızlı ve sade bir kullanıcı arayüzü sunmak öncelikliydi.
+
+Backend
+Python / Flask Web sunucusu ve API yönetimi
+Gemini API Google’ın güçlü dil modeli (Gemini 1.5 Flash)
+LangChain Belge işleme, vektörleme ve LLM entegrasyonu
+FAISS Vektör veritabanı (belgeleri anında sorgulanabilir hale getirme)
+dotenv Güvenli anahtar yönetimi
+
+Frontend
+HTML CSS Modern ve sade UI tasarımı
+Vanilla JS Mod seçimi, sohbet yönetimi, yükleme, localStorage gibi tüm işlemler
+
+🔮 Arayüz (UI) Nasıl Tasarlandı?
+Karmaşık ve dikkat dağıtan UI’lardan kaçınarak, öğrencinin sadece içerik ve sohbetle etkileşimde olabileceği bir tasarım tercih edildi:
+
+Belgeleri listeleyen panel
+Sohbet başlıkları, otomatik isimlendirme ve silme
+Not defteri: Sağ panelde açılır yapı
+Pomodoro: Çalışma süresi takibi
+Mor ve soft tonlarla sade tema
+🔮 Özellikler
+Temel Fonksiyonlar
+PDF dosyası yükleme (çoklu dosya desteği)
+Otomatik belge parçalama ve vektör oluşturma
+Yüklenen içeriklere göre sohbet edebilme
+Kaynak seçimi / Genel bilgi modu
+Sohbet başlığı otomatik belirleme & geçmiş sohbet listesi
+Not defteri komutu “Bunu not et” gibi komutlarla önemli noktaları kaydetme
+Pomodoro zamanlayıcı ile çalışma döngüsü oluşturma
+Estetik mor temalı modern arayüz
+🌱 Geliştirme Aşamasındaki Özellikler
+Yakın gelecekte proje, aşağıdaki özelliklerle daha güçlü bir AI eğitim deneyimine dönüşecek:
+
+🎧 Podcast oluşturma Belgelerden metin-ses dönüşümü
+🧠 Kişiselleştirilmiş öğrenme Öğrencinin önceki sorularına göre yanıt kalitesi ve seviyesi
+📊 Görsel analiz Hangi konuda ne kadar yoğunlaştığını grafikle gösterme🌐 Kaynak zenginliği YouTube altyazısı, makale veya bağlantıdan bilgi alma
+🎭 Rol bazlı anlatım “Bana bunu lise öğretmeni gibi anlat” gibi özel anlatım modları
+
+🐙 Neyi Kanıtlamak İstiyorum?
+“Sohbet ederek öğrenme, sadece bir stil değil; öğrenmenin doğal ve etkili bir biçimidir.”
+
+ILTeach ile öğrenci kendi kaynaklarını yükler, etkileşime girer, unuttuğu yerde not alır, isterse çalışır, isterse dinler.
+
+Tıpkı sınavdan önce arkadaşından bir konuyu dinleyip “Ben bu konuyu şimdi anladım!” demesi gibi.
+
+
+🐈‍⬛ Projeye Git
+GitHub: https://github.com/busrahazer/ilteach
