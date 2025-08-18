@@ -1,0 +1,76 @@
+The Power of Learning Through Conversation: Interactive Learning Experience with ILTeach
+
+🟣 “Having my friend explain the subject to me before an exam was more useful than studying for days.”
+
+Many students have said this sentence. Because one of the most effective ways to learn is through mutual interaction. Based on this idea, I started developing the ILTeach — Interactive Lesson Teaching project.
+
+👾 How Did the Idea Come About?
+When I started the project, my fundamental question was:
+
+Can artificial intelligence explain a subject to us just like a friend would?
+
+Behind this question were three key observations:
+
+Presenting information in a synthesized manner reduces mental load.
+Learning with someone at a similar level is more effective due to emotional closeness.
+Mutual interaction makes both learning and questioning information easier.
+As a result, my goal was to design not just a system that presents information, but a truly interactive AI learning companion.
+
+The Main Purpose of the Product
+ILTeach is a platform where students can upload their own resources (PDF notes, course content, etc.) and chat about these documents.
+
+Purpose:
+
+To synthesize the content available to students
+To enable them to ask questions directly related to the topic
+To provide general information support even in situations where there are no resources available
+🔗Technologies Used
+In this project, the priority was to offer a powerful AI engine alongside a fast and simple user interface.
+
+Backend
+Python / Flask Web server and API management
+Gemini API Google’s powerful language model (Gemini 1.5 Flash)
+LangChain Document processing, vectorization and LLM integration
+FAISS Vector database (making documents instantly searchable)
+dotenv Secure key management
+
+Frontend
+HTML CSS Modern and simple UI design
+Vanilla JS Mod selection, chat management, loading, localStorage and all other operations
+
+How Design Interface (UI) ?
+Avoiding complex and distracting UI, a design was chosen that allows students to interact only with content and chat:
+
+Panel listing documents
+Chat titles, automatic naming and deletion
+Notebook: Pop-up structure on the right panel
+Pomodoro: Work time tracking
+Simple theme with purple and soft tones
+🔮 Features
+Main Functions:
+Upload PDF files (multiple file support)
+Automatic document splitting and vector creation
+Chat based on uploaded content
+Source selection / General information mode
+Automatic chat title determination & chat history list
+Notebook command to record important points with commands such as “Note this”
+Create work cycles with the Pomodoro timer
+Modern interface with an aesthetic purple theme
+🌱 Features in Development
+In the near future, the project will evolve into a more powerful AI learning experience with the following features:
+
+🎧 Podcast creation Text-to-speech conversion from documents
+🧠 Personalized learning Response quality and level based on the student’s previous questions
+📊 Visual analysis Showing focus in the particular topic through graphs. 🌐 Rich sources Retrieving information from YouTube subtitles, articles, or links
+🎭 Role-based narration Special narration modes such as “Explain this to me like a high school teacher”
+
+🐙 What Am I Trying to Prove?
+“Learning through conversation is not just a style; it is a natural and effective form of learning.”
+
+With ILTeach, the student uploads their own resources, interacts, takes notes where they forget, studies if they want, or listens if they want.
+
+Just like listening to a friend explain a topic before an exam and saying, “I understand this topic now!”
+
+
+🐈‍⬛ Got to Project Code
+GitHub: https://github.com/busrahazer/ilteach
