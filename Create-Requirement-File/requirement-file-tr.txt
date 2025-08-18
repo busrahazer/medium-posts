@@ -1,0 +1,22 @@
+Gereklilikler Dosyası Oluşturmak
+
+
+GitHub’da bir proje incelediğinizde bu projedeki Requirements yani Gereklilikler kısmını mutlaka görmüşsünüzdür. Buradaki kaynakları tek tek yüklemek yerine tek bir dosyayla yapmak büyük kolaylık sağlar. Ya da kendi projeniz için bir Gereklilikler dosyası oluşturmak projenizi kullanmak isteyen kullanıcılar için epey faydalıdır. Öncelikle gereklilikleri tespit etmek gerekir. Ben örnek olarak Python için anlatacağım. Terminale gelerek şu komutu girersek:
+
+pip list
+bilgisayarınızda yüklü tüm Python modüllerini ve hangi
+sürümleri olduğunu görebilirsiniz.
+
+
+Benim Bilgisayarımda Yüklü Olan Python Modüllerinin Bir Kısmı
+Daha sonra projenize gelerek hangi modüllere ihtiyacınız olduğunu tespit ederek boş bir text dosyasına bu modülleri sürümleriyle birlikte kopyalayabilirsiniz.
+
+Press enter or click to view image in full size
+
+Bir Projem için Oluşturduğum Gereklilikler Dosyası
+Bu işlemden sonra text dosyasını kaydediyoruz. Peki bu text dosyasını nasıl kullanabiliriz?
+
+Terminale gelerek şu komutu yazmak bu dosyadaki modülleri otomatik şekilde indirecektir.
+
+pip install -r requirements.txt    // dosya isminizi girmelisiniz
+Projelerinizde çok fazla modül ve kütüphane kullandığınızda bu dosyasyı oluşturmak hem sizin için hem de diğer kullanıcılar için faydalı olacaktır. Sonraki yazıda görüşmek üzere.
