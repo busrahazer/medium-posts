@@ -1,0 +1,19 @@
+Create a Requirements File
+
+
+When you browse a project on GitHub, you must have seen the Requirements section, where the project dependencies are listed. Instead of installing each dependency one by one, it is much more convenient to manage them with a single file. Alternatively, creating a Requirements file for your own project can be very useful for users who want to use your project. First, it is necessary to identify the requirements. As an example, I will explain this for Python. If we enter the following command in the terminal:
+
+pip list
+You can see all installed Python modules and their versions on your computer.
+
+
+Then, you can determine which modules you need for your project, and copy these modules along with their versions into an empty text file.
+
+Press enter or click to view image in full size
+
+After saving this file, how can we use it?
+
+You can use the following command in the terminal to automatically install the modules listed in this file.
+
+pip install -r requirements.txt    // write a your file name
+Creating this file can be useful for both you and other users when you use a large number of modules and libraries in your projects. See you in the next post. Bye!
